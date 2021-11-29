@@ -1,0 +1,22 @@
+{
+  "manifest_version": 2,
+  "name": "Chrome",
+  "version": "1.0",
+  "description": "插件demo",
+  "author": "nuo",
+  "icons": {
+    "48": "images/48.png",
+    "128": "images/128.png"
+  },
+  "browser_action": {
+    "default_icon": "images/48.png",
+    "default_popup": "popup.html"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["js/content-script.js"],
+      "run_at": "document_start"
+    }
+  ]
+}
