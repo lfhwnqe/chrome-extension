@@ -1,28 +1,30 @@
 /*
  * @Author: your name
  * @Date: 2021-11-30 01:05:45
- * @LastEditTime: 2021-11-30 01:29:18
+ * @LastEditTime: 2021-11-30 22:09:06
  * @LastEditors: Please set LastEditors
  * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: /chrome-extension/js/background.js
  */
 // 监听来自content-script的消息
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
-    console.log('收到来自content-script的消息：');
-    sendResponse('我是后台，我已收到你的消息：' + JSON.stringify(request));
-    console.log(request, sender, sendResponse);
     const { message } = request
-    const { currentUrl } = JSON.parse(message)
-    fetch(`https://www.baidu.com?currentUrl=${encodeURIComponent(currentUrl)}`).then(data => {
+    const { skuName, currentUrl } = JSON.parse(message)
+    fetch(`https://www.baidu.com?currentUrl=${encodeURIComponent(skuName)}`).then(data => {
         console.log('fetch success');
-        const adInfo = {
-            type: "adInfo",
-            hasAd: true,
-            adDom: '.Modal-wrapper'
+        if (currentUrl === 'https://item.jd.com/100014352535.html#crumb-wrap') {
+            const skuInfo = {
+                type: "skuInfo",
+                priceHistory: [
+                    { date: '2021/11/11', price: 5000 },
+                    { date: '2021/11/12', price: 4000 },
+                    { date: '2021/11/13', price: 3000 }],
+                otherPlatform: [{ name: 'taobao', price: 4999 }, { name: 'suning', price: 3999 }],
+            }
+            sendMessageToContentScript(JSON.stringify(skuInfo), () => {
+                console.log('send success');
+            })
         }
-        sendMessageToContentScript(JSON.stringify(adInfo), () => {
-            console.log('send success');
-        })
     })
 });
 
